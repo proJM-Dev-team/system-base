@@ -22,11 +22,13 @@ jobs:
       id-token: write
     strategy:
       fail-fast: false
-      max-parallel: 1
+      max-parallel: 5
       matrix:
-        variant: [general, nvidia]
-        desktop: [nogui, gnome, plasma]
+        variant: [container, general, nvidia]
+        desktop: [nogui, xfce, mate, budgie, gnome, plasma]
         include:
+          - variant: container
+            suffix: '-container'
           - variant: general
             suffix: ''
           - variant: nvidia
