@@ -22,7 +22,7 @@ jobs:
       id-token: write
     strategy:
       fail-fast: false
-      max-parallel: 5
+      max-parallel: 1
       matrix:
         variant: [general, nvidia]
         desktop: [nogui, gnome, plasma]
