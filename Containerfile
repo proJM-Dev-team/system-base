@@ -6,6 +6,8 @@ ARG CORE_BRANCH=main
 ARG VARIANT=general
 ARG DESKTOP=nogui
 
+RUN if [ "$VARIANT" != container ]; then install-packages-build linux-zen linux-firmware broadcom-wl-dkms; fi
+
 RUN if [ "$DESKTOP" == gnome ]; then install-packages-build gnome; \
   elif [ "$DESKTOP" == plasma ]; then install-packages-build plasma kde-utilities-meta kde-accessibility-meta; \
   elif [ "$DESKTOP" == xfce ]; then install-packages-build xfce4; \
@@ -19,8 +21,6 @@ RUN if [ "$DESKTOP" == gnome ]; then install-packages-build xorg-server gdm; sys
   elif [ "$DESKTOP" == mate ]; then install-packages-build xorg-server lightdm lightdm-gtk-greeter; systemctl enable lightdm; \
   elif [ "$DESKTOP" == budgie ]; then install-packages-build xorg-server lightdm lightdm-gtk-greeter; systemctl enable lightdm; \
   fi
-
-RUN if [ "$VARIANT" != container ]; then install-packages-build linux-zen linux-firmware broadcom-wl-dkms; fi
 
 RUN if [ "$VARIANT" == nvidia ]; then install-packages-build nvidia-dkms; fi
 
