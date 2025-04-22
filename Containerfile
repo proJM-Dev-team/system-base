@@ -6,8 +6,6 @@ ARG CORE_BRANCH=main
 ARG VARIANT=general
 ARG DESKTOP=nogui
 
-RUN if [ "$VARIANT" != container ]; then install-packages-build linux-zen linux-firmware broadcom-wl-dkms; fi
-
 RUN if [ "$DESKTOP" == gnome ]; then install-packages-build gnome; \
   elif [ "$DESKTOP" == plasma ]; then install-packages-build plasma kde-utilities-meta kde-accessibility-meta; \
   elif [ "$DESKTOP" == xfce ]; then install-packages-build xfce4; \
@@ -22,15 +20,18 @@ RUN if [ "$DESKTOP" == gnome ]; then install-packages-build xorg-server gdm; sys
   elif [ "$DESKTOP" == budgie ]; then install-packages-build xorg-server lightdm lightdm-gtk-greeter; systemctl enable lightdm; \
   fi
 
+RUN if [ "$VARIANT" != container ]; then install-packages-build linux-zen linux-firmware broadcom-wl-dkms; fi
+
 RUN if [ "$VARIANT" == nvidia ]; then install-packages-build nvidia-dkms; fi
 
 RUN install-packages-build grub efibootmgr
 
-RUN install-packages-build python-yaml python-click python-fasteners skopeo umoci jq
+RUN install-packages-build python-yaml python-click python-fasteners skopeo umoci jq libnotify
 
 COPY overlays/common /
 
 RUN systemctl enable commonarch-update-cleanup
+RUN systemctl enable --global commonarch-update-check
 
 # Clean up cache
 RUN yes | pacman -Scc

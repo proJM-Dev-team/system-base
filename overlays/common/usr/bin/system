@@ -3,6 +3,7 @@
 import os
 import sys
 import json
+import time
 import yaml
 import click
 import shutil
@@ -13,11 +14,42 @@ import subprocess
 
 @click.group("cli")
 def cli():
-    """Manage system operations using this utility on CommonArch."""
+    """Manage system operations."""
 
 
 def main():
     cli(prog_name="system")
+
+
+@cli.command("update-check", hidden=True)
+def update_check_daemon():
+    while True:
+        try:
+            if not os.path.isdir('/.update_rootfs'):
+                with open('/system.yaml') as f:
+                    system_config = yaml.safe_load(f)
+
+                image_name = system_config['image']
+
+                image_metadata = json.loads(subprocess.run(['skopeo', 'inspect', image_name], stdout=subprocess.PIPE).stdout.decode())
+                if (type(image_metadata.get('Labels')) == dict):
+                    if type(image_metadata['Labels'].get('org.opencontainers.image.revision')) == str:
+                        new_revision = image_metadata['Labels']['org.opencontainers.image.revision']
+                        if os.path.isfile('/var/lib/commonarch/revision'):
+                            with open('/var/lib/commonarch/revision') as current_revision_file:
+                                current_revision = current_revision_file.read().strip()
+                            if new_revision != current_revision:
+                                if subprocess.run(['notify-send', '--app-name=System', '--urgency=critical', 'Update available',
+                                    'A system update is available.', '--action=update=Update in the background'], stdout=subprocess.PIPE).stdout.decode().strip() == 'update':
+                                    if subprocess.run(['pkexec', 'system', 'update']).returncode == 0:
+                                        if subprocess.run(['notify-send', '--app-name=System', '--urgency=critical', 'System updated',
+                                            'Reboot to apply update?', '--action=reboot=Reboot now', '--action=Later'],
+                                            stdout=subprocess.PIPE).stdout.decode().strip() == 'reboot':
+                                            subprocess.run(['reboot'])
+
+        except:
+            pass
+        time.sleep(3600)
 
 
 @cli.command("update")
@@ -293,6 +325,16 @@ Server = {package_repo["repo-url"]}
 
         if type(system_config.get('packages')) == list:
             subprocess.run(['systemd-nspawn', '-D', new_rootfs, 'pacman', '-Sy', '--ask=4', *(system_config.get('packages'))])
+
+        if type(system_config.get('services')) == list:
+            for service in system_config.get('services'):
+                if type(service) is str:
+                    subprocess.run(['systemd-nspawn', '-D', new_rootfs, 'systemctl', 'enable', service])
+
+        if type(system_config.get('user-services')) == list:
+            for user_service in system_config.get('user-services'):
+                if type(user_service) is str:
+                    subprocess.run(['systemd-nspawn', '-D', new_rootfs, 'systemctl', 'enable', '--global', user_service])
 
         subprocess.run(['mkdir', '-p', f'/.new.var.lib/commonarch'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         with open(f'/.new.var.lib/commonarch/revision', 'w') as new_revision_file:
