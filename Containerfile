@@ -6,7 +6,7 @@ ARG CORE_BRANCH=main
 ARG VARIANT=general
 ARG DESKTOP=nogui
 
-RUN if [ "$VARIANT" != container ]; then install-packages-build linux-zen linux-firmware broadcom-wl-dkms; fi
+RUN if [ "$VARIANT" != container ]; then install-packages-build linux-zen linux-firmware linux-zen-headers broadcom-wl-dkms; fi
 
 RUN if [ "$DESKTOP" == gnome ]; then install-packages-build gnome; \
   elif [ "$DESKTOP" == plasma ]; then install-packages-build plasma kde-utilities-meta kde-accessibility-meta; \
