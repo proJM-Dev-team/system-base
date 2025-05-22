@@ -22,7 +22,7 @@ jobs:
       max-parallel: 5
       matrix:
         variant: [container, general, nvidia]
-        desktop: [nogui, xfce, mate, budgie, gnome, plasma]
+        desktop: [nogui]
         include:
           - variant: container
             suffix: '-container'
