@@ -8,7 +8,7 @@ ARG DESKTOP=nogui
 
 RUN if [ "$VARIANT" != container ]; then install-packages-build linux-zen linux-firmware linux-zen-headers broadcom-wl-dkms; fi
 
-RUN if [ "$VARIANT" == nvidia ]; then install-packages-build nvidia-dkms lib32-nvidia-utils; fi
+RUN if [ "$VARIANT" == nvidia ]; then install-packages-build nvidia-dkms lib32-nvidia-utils nvidia-container-toolkit; fi
 
 RUN install-packages-build grub efibootmgr
 
