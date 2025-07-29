@@ -6,6 +6,9 @@ on: # https://docs.github.com/en/actions/using-workflows/events-that-trigger-wor
     branches:
       - main
       - dev
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '00 8 * * 6'
 
 jobs:
   build:
