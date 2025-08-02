@@ -14,6 +14,8 @@ RUN install-packages-build grub efibootmgr
 
 RUN install-packages-build python-yaml python-click python-fasteners skopeo umoci jq libnotify
 
+COPY overlays/common /
+
 RUN systemctl enable commonarch-update-cleanup
 RUN systemctl enable --global commonarch-update-check
 
