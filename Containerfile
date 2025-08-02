@@ -21,9 +21,7 @@ COPY overlays/common /
 
 RUN rm -rf /rootfs; mkdir /rootfs
 
-RUN whoami
-
-RUN pacstrap-docker /rootfs base
+RUN chmod +x /usr/bin/pacstrap-docker ;pacstrap-docker /rootfs base
 
 FROM scratch as root
 
