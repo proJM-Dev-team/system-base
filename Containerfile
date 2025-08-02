@@ -21,7 +21,7 @@ COPY overlays/common /
 
 RUN rm -rf /rootfs; mkdir /rootfs
 
-RUN chmod +x /usr/bin/pacstrap-docker ;pacstrap-docker /rootfs base
+RUN cat /etc/fstab ;pacstrap-docker /rootfs base
 
 FROM scratch as root
 
