@@ -21,7 +21,7 @@ COPY overlays/common /
 
 RUN rm -rf /rootfs; mkdir /rootfs
 
-RUN chmod +x /usr/bin/pacstrap-docker ;pacstrap-docker /rootfs base
+RUN chmod +x /usr/bin/pacstrap-docker; pacstrap-docker /rootfs base
 
 FROM scratch as root
 
@@ -50,6 +50,7 @@ RUN install-packages-build grub efibootmgr
 
 RUN install-packages-build python-yaml python-click python-fasteners skopeo umoci jq libnotify
 
+RUN systemctl daemon-reload
 RUN systemctl enable commonarch-update-cleanup
 RUN systemctl enable --global commonarch-update-check
 
