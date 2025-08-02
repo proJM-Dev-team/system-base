@@ -24,11 +24,9 @@ jobs:
       fail-fast: false
       max-parallel: 5
       matrix:
-        variant: [container, general, nvidia]
+        variant: [general, nvidia]
         desktop: [nogui]
         include:
-          - variant: container
-            suffix: '-container'
           - variant: general
             suffix: ''
           - variant: nvidia
