@@ -20,6 +20,9 @@ WORKDIR /
 COPY overlays/common /
 
 RUN rm -rf /rootfs; mkdir /rootfs
+
+RUN whoami
+
 RUN pacstrap-docker /rootfs base
 
 FROM scratch as root
